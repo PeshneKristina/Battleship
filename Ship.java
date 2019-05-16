@@ -22,9 +22,8 @@ public class Ship {
     public Ship(ArrayList<Cell> decks) {
         this.state = state;
         this.length = decks.size();
-
+        this.decks = decks;
     }
-
 
 
     public void checkState() {
@@ -64,9 +63,7 @@ public class Ship {
     }
 
 
-
     // подумать как рисовать видимые и невидимые корабли
-
 
 
     public boolean isOverlayOrTouch(Ship currentShip) {
@@ -87,16 +84,27 @@ public class Ship {
     }
 
 
-
     public boolean isOverlayOrTouchCell1(Cell cell, Ship ship) {
-        for (Cell deck : ship.getDecks())
-            for (int dx = -1; dx < 2; dx++)
-                for (int dy = -1; dy < 2; dy++)
-                    if (cell.getLetter() == deck.getLetter() + dx &&
-                            cell.getNumber() == deck.getNumber() + dy)
+        for (Cell deck : ship.getDecks()) {
+            for (int dx = -1; dx < 2; dx++) {
+                for (int dy = -1; dy < 2; dy++) {
+                    if((cell.getLetter() == deck.getLetter() + dx) &&
+                            (cell.getNumber() == deck.getNumber() + dy))
                         return true;
+                }
+            }
+        }
         return false;
 
+    }
+
+    @Override
+    public String toString() {
+        ArrayList<String> strDecks = new ArrayList<>();
+        for (Cell cell:decks) {
+            strDecks.add(cell.toString());
+        }
+        return  strDecks.toString();
     }
 }
 

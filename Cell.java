@@ -41,10 +41,6 @@ public class Cell {
         return number;
     }
 
-    public void paint(Graphics g, int cellSize, Color color){
-        g.setColor(color);
-        g.fill3DRect(letter*cellSize +1, number*cellSize + 1, cellSize -2, cellSize - 2,true );
-    }
 
     @Override
     public String toString() {
