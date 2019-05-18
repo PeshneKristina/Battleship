@@ -7,7 +7,8 @@ import java.util.Random;
 public class Ships {
 
     private final int CELL_SIZE = 40;
-    private static ArrayList<Ship> ships = new ArrayList<>();
+    private  ArrayList<Ship> ships = new ArrayList<>();
+    private static ArrayList<Ship> ships1 = new ArrayList<>();
     private static ArrayList<Cell> fourDecks = new ArrayList<>();
     private static ArrayList<Cell> threeDecks1 = new ArrayList<>();
     private static ArrayList<Cell> threeDecks2 = new ArrayList<>();
@@ -43,7 +44,7 @@ public class Ships {
         arrayOfDecks.add(deck);
         if (arrayOfDecks.size() == numberOfDecks) {
             Ship ship = new Ship(arrayOfDecks);
-            ships.add(ship);
+            ships1.add(ship);
         }
         return arrayOfDecks;
     }
@@ -58,8 +59,8 @@ public class Ships {
     }
 
     public static boolean isOverlayOrTouch1(Cell cell) {
-        if (ships.isEmpty()) return false;
-        for (Ship ship : ships) {
+        if (ships1.isEmpty()) return false;
+        for (Ship ship : ships1) {
             if (ship.isOverlayOrTouchCell1(cell, ship)) return true;
         }
         return false;

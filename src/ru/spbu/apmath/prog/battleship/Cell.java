@@ -39,6 +39,9 @@ public class Cell {
         return number;
     }
 
+    public void setState(String state) {
+        this.state = state;
+    }
 
     @Override
     public String toString() {

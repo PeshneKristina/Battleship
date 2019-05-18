@@ -10,6 +10,7 @@ import java.util.ArrayList;
 
 import static ru.spbu.apmath.prog.battleship.Ships.*;
 import static ru.spbu.apmath.prog.battleship.Shots.checkShot;
+import static ru.spbu.apmath.prog.battleship.Shots.isShot;
 
 
 public class Gui {
@@ -19,8 +20,8 @@ public class Gui {
     final int CELL_SIZE = PANEL_SIZE / FIELD_SIZE;
     static ImageIcon shipIcon = new ImageIcon("resources/ship.png");
     static ImageIcon bangIcon = new ImageIcon("resources/bang.png");
-    static ImageIcon crossIcon = new ImageIcon("resources/crossIcon.png");
-
+    static ImageIcon crossIcon = new ImageIcon("resources/cross.png");
+    static Ships randomShips;
 
     public static void main(String[] args) {
 
@@ -82,7 +83,7 @@ public class Gui {
                 for (JButton b : buttonsOfHuman) {
                     b.setIcon(null);
                 }
-                Ships randomShips = new Ships(FIELD_SIZE - 1);
+                randomShips = new Ships(FIELD_SIZE - 1);
                 for (Ship ship : randomShips.getShips()) {
                     for (Cell deck : ship.getDecks()) {
                         int x = deck.getLetter();
@@ -100,6 +101,7 @@ public class Gui {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Shots humanShots = new Shots();
+                Shots AIShots = new Shots();
                 for (JButton b : buttonsOfAI) {
                     b.setIcon(null);
                 }
@@ -109,13 +111,14 @@ public class Gui {
                         int x = deck.getLetter();
                         int y = deck.getNumber();
                         int numberOfButton = 10 * y + x;
-                        buttonsOfAI.get(numberOfButton).setIcon(shipIcon);
                     }
                 }
                 //panel3.setVisible(false);
-                doShot(buttonsOfAI,ShipsOfAI,humanShots);
+                GameModel gameModel = new GameModel(false);
+                gameModel.game(randomShips, ShipsOfAI, buttonsOfAI, buttonsOfHuman, humanShots, AIShots);
 
             }
+
         });
 
         set.addActionListener(new ActionListener() {
@@ -330,7 +333,7 @@ public class Gui {
                     int x = finalI % 10;
                     int y = finalI / 10;
                     if (check(x, y, numberOfDecks, amountOfClick) && checkSetInRow(amountOfClick, finalI, numberOfDecks)) {
-                        bs.get(finalI).setIcon(new ImageIcon("C:\\Users\\Кристина\\Desktop\\IdeaProjects\\hw1\\homework1\\src\\ru\\spbu\\apmath\\prog\\battleship\\ship.png"));
+                        bs.get(finalI).setIcon(shipIcon);
                         formShip(x, y, numberOfDecks, amountOfClick);
                     }
 
@@ -342,25 +345,53 @@ public class Gui {
 
     }
 
+    public static void doAIShot(ArrayList<JButton> bs, Ships shipsOfHuman, Shots shots) {
+        Cell shot = shots.randomShots();
+        int i = 10 * shot.getNumber() + shot.getLetter();
+        if (!shots.hitSamePlace(shot.getLetter(), shot.getNumber())) {
+            if (checkShot(shot, shipsOfHuman, shots) == "bangIcon") {
+                bs.get(i).setIcon(bangIcon);
+                shots.setShot(true);
+            } else {
+                bs.get(i).setIcon(crossIcon);
+                shots.setShot(true);
+            }
+        } else {
+            System.out.println("уже стреляли");
+            shots.setShot(false);
+        }
+    }
+
     public static void doShot(ArrayList<JButton> bs, Ships ShipsOfAI, Shots shots) {
         for (int i = 0; i < bs.size(); i++) {
             int finalI = i;
+
             bs.get(i).addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     int x = finalI % 10;
                     int y = finalI / 10;
-                        if (checkShot(x, y, true, ShipsOfAI, shots ) == "bangIcon") {
+                    Cell shot = new Cell(x, y);
+                    if (!shots.hitSamePlace(x, y)) {
+                        if (checkShot(shot, ShipsOfAI, shots) == "bangIcon") {
                             bs.get(finalI).setIcon(bangIcon);
-                        }
-                        else {
+                            shot.setState("busy");
+                            shots.setShot(true);
+                        } else {
                             bs.get(finalI).setIcon(crossIcon);
+                            shot.setState("busy");
+                            shots.setShot(true);
                         }
+                    } else {
+                        System.out.println("уже стреляли");
+                        shots.setShot(false);
+                    }
 
                 }
             });
         }
     }
+
 
     public static void click2(ArrayList<JButton> bs) {
         for (int i = 0; i < bs.size(); i++) {
@@ -394,7 +425,6 @@ public class Gui {
                 public void mouseExited(MouseEvent e) {
 
                 }
-
 
             });
 

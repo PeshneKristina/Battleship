@@ -1,31 +1,51 @@
 package ru.spbu.apmath.prog.battleship;
 
 import java.util.ArrayList;
+import java.util.Random;
+
 
 public class Shots {
-    private static ArrayList<Shot> shots;
-
+    private ArrayList<Cell> shots;
+    private Random random;
+    private boolean isShot;
     Shots() {
-        shots = new ArrayList<Shot>();
+        isShot= false;
+        shots = new ArrayList<Cell>();
     }
 
-    void addShot(int x, int y, boolean shot) {
-        shots.add(new Shot(x, y, shot));
+    public boolean isShot() {
+        return isShot;
     }
 
-    public static boolean hitSamePlace(int x, int y) {
-        for (Shot shot : shots)
-            if (shot.getX() == x && shot.getY() == y && shot.isShot())
+    public void setShot(boolean shot) {
+        isShot = shot;
+    }
+
+    void addShot(Cell cell) {
+        shots.add(cell);
+    }
+
+    public boolean hitSamePlace(int x, int y) {
+        for (Cell shot : shots)
+            if (shot.getLetter() == x && shot.getNumber() == y )
                 return true;
         return false;
     }
 
-    public static String checkShot(int x, int y, boolean bool, Ships ShipsOfAI, Shots shots) {
-        shots.addShot(x,y,true);
-        Cell c = new Cell(x, y);
-        if (!ShipsOfAI.getShips().isEmpty()) {
-            for (Ship ship : ShipsOfAI.getShips()) {
-                if (ship.getDecks().indexOf(c) != -1) {
+    public Cell randomShots(){
+        random = new Random();
+        int x = random.nextInt(9);
+        int y = random.nextInt(9);
+        return new Cell(x,y);
+    }
+
+    public static String checkShot(Cell cell, Ships arrayOfShips, Shots arrayOfShots) {
+        arrayOfShots.addShot(cell);
+        cell.setState("busy");
+        if (!arrayOfShips.getShips().isEmpty()) {
+            for (Ship ship : arrayOfShips.getShips()) {
+                if (ship.getDecks().indexOf(cell) != -1) {
+                    ship.checkState();
                     return "bangIcon";
                 }
             }
@@ -33,10 +53,16 @@ public class Shots {
         return "crossIcon";
     }
 
+    public static boolean isShot(Cell cell){
+        if (cell.getState()=="busy"){
+        return true;
+        }
+        return false;
+    }
 
-    Shot getShot(int x, int y) {
-        for (Shot shot : shots)
-            if (shot.getX() == x && shot.getY() == y && (!shot.isShot()))
+    Cell getShot(int x, int y) {
+        for (Cell shot : shots)
+            if (shot.getLetter() == x && shot.getNumber() == y )
                 return shot;
         return null;
     }
