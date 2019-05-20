@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 import static ru.spbu.apmath.prog.battleship.Ships.*;
 import static ru.spbu.apmath.prog.battleship.Shots.checkShot;
@@ -22,6 +23,8 @@ public class Gui {
     static ImageIcon bangIcon = new ImageIcon("resources/bang.png");
     static ImageIcon crossIcon = new ImageIcon("resources/cross.png");
     static Ships randomShips;
+    static Cells fieldOfAI = new Cells();
+    static Cells fieldOfHuman = new Cells();
 
     public static void main(String[] args) {
 
@@ -33,14 +36,14 @@ public class Gui {
         frame.setLayout(new GridBagLayout());
 
         // создаем поле противника
-        JPanel panelOfAI = new JPanel();
         ArrayList<JButton> buttonsOfAI = new ArrayList<>();
-        createField(panelOfAI, frame, 0, buttonsOfAI);
+
+        JPanel panelOfAI = createField(frame, 0, buttonsOfAI, fieldOfAI);
 
         // создаем свое игровое поле
-        JPanel panelOfHuman = new JPanel();
         ArrayList<JButton> buttonsOfHuman = new ArrayList<>();
-        createField(panelOfHuman, frame, 1, buttonsOfHuman);
+
+        JPanel panelOfHuman = createField(frame, 1, buttonsOfHuman, fieldOfHuman);
 
         // панель для создания кораблей
         JPanel panel3 = new JPanel();
@@ -110,7 +113,8 @@ public class Gui {
                     for (Cell deck : ship.getDecks()) {
                         int x = deck.getLetter();
                         int y = deck.getNumber();
-                        int numberOfButton = 10 * y + x;
+                        //int numberOfButton = 10 * y + x;
+                        //buttonsOfAI.get(numberOfButton).setIcon(shipIcon);
                     }
                 }
                 //panel3.setVisible(false);
@@ -303,7 +307,9 @@ public class Gui {
 
     }
 
-    public static void createField(JPanel panel, JFrame frame, int gridx, ArrayList<JButton> buttonsOfPanel) {
+    public static JPanel createField(JFrame frame, int gridx, ArrayList<JButton> buttonsOfPanel, Cells fieldOfGamer) {
+
+        JPanel panel = new JPanel();
         panel.setLayout((new GridLayout(10, 10)));
         panel.setPreferredSize(new Dimension(PANEL_SIZE, PANEL_SIZE));
         panel.setBorder(BorderFactory.createLineBorder(Color.BLUE));
@@ -312,10 +318,13 @@ public class Gui {
         panel.setBackground(Color.WHITE);
         for (int i = 0; i < 100; i++) {
             buttonsOfPanel.add(new JButton());
+            fieldOfGamer.addCell(i % 10, i / 10);
+
         }
         for (JButton button : buttonsOfPanel) {
             panel.add(button);
         }
+        return panel;
     }
 
     public static void addOnFrame(JFrame frame, Component component, int gridx, int gridy) {
@@ -349,9 +358,17 @@ public class Gui {
         Cell shot = shots.randomShots();
         int i = 10 * shot.getNumber() + shot.getLetter();
         if (!shots.hitSamePlace(shot.getLetter(), shot.getNumber())) {
-            if (checkShot(shot, shipsOfHuman, shots) == "bangIcon") {
+            String returnCheck = checkShot(shot, shipsOfHuman, shots, fieldOfHuman);
+            if (returnCheck == "bangIcon") {
                 bs.get(i).setIcon(bangIcon);
+                fieldOfHuman.setStateCell(shot.getLetter(), shot.getNumber());
                 shots.setShot(true);
+            } else if (returnCheck == "bangIconAround") {
+                for (Integer b : shots.getIndexOfButtonOfCurrentShip(fieldOfHuman, shots)) {
+                    bs.get(i).setIcon(bangIcon);
+                    shots.setShot(true);
+                    bs.get(b).setIcon(crossIcon);
+                }
             } else {
                 bs.get(i).setIcon(crossIcon);
                 shots.setShot(true);
@@ -362,34 +379,32 @@ public class Gui {
         }
     }
 
-    public static void doShot(ArrayList<JButton> bs, Ships ShipsOfAI, Shots shots) {
-        for (int i = 0; i < bs.size(); i++) {
-            int finalI = i;
 
-            bs.get(i).addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    int x = finalI % 10;
-                    int y = finalI / 10;
-                    Cell shot = new Cell(x, y);
-                    if (!shots.hitSamePlace(x, y)) {
-                        if (checkShot(shot, ShipsOfAI, shots) == "bangIcon") {
-                            bs.get(finalI).setIcon(bangIcon);
-                            shot.setState("busy");
-                            shots.setShot(true);
-                        } else {
-                            bs.get(finalI).setIcon(crossIcon);
-                            shot.setState("busy");
-                            shots.setShot(true);
-                        }
-                    } else {
-                        System.out.println("уже стреляли");
-                        shots.setShot(false);
-                    }
-
+    public static void doShot(ArrayList<JButton> bs, Ships ShipsOfAI, Shots shots, int finalI) {
+        int x = finalI % 10;
+        int y = finalI / 10;
+        Cell shot = new Cell(x, y);
+        if (!shots.hitSamePlace(x, y)) {
+            String returnCheck = checkShot(shot, ShipsOfAI, shots, fieldOfAI);
+            if (returnCheck == "bangIcon") {
+                bs.get(finalI).setIcon(bangIcon);
+                shots.setShot(true);
+            } else if (returnCheck == "bangIconAround") {
+                for (Integer b : shots.getIndexOfButtonOfCurrentShip(fieldOfAI, shots)) {
+                    bs.get(finalI).setIcon(bangIcon);
+                    shots.setShot(true);
+                    bs.get(b).setIcon(crossIcon);
                 }
-            });
+            } else {
+                bs.get(finalI).setIcon(crossIcon);
+                shot.setState("busy");
+                shots.setShot(true);
+            }
+        } else {
+            System.out.println("уже стреляли");
+            shots.setShot(false);
         }
+
     }
 
 

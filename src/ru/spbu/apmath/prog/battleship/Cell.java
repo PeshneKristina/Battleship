@@ -1,9 +1,12 @@
 package ru.spbu.apmath.prog.battleship;
 
+import java.util.ArrayList;
+
 public class Cell {
     private int number;
     private int letter;
     private String state;
+
 
     public Cell(int letter,int number) {
         this.letter = letter;
@@ -20,11 +23,11 @@ public class Cell {
     }
 
 
-    public void checkState(int x,int y){
+    public String checkState(int x,int y){
         if (number == x && letter == y){
-            state = "busy";
+            return "busy";
         }
-        else  state = "free";
+        else  return "free";
     }
 
     public String getState() {

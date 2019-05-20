@@ -25,14 +25,14 @@ public class Ship {
     }
 
 
-    public void checkState() {
+    public void checkState(Cells field) {
         int amount = 0;
         for (int i = 0; i < length; i++) {
-            if (decks.get(i).getState() == "busy") {
-                amount = +1;
+            if (field.getStateCell(decks.get(i).getLetter(),decks.get(i).getNumber()) == "busy") {
+                amount = amount + 1;
             }
         }
-        if (amount == length - 1) {
+        if (amount == length ) {
             state = "killed";
         } else if (amount == 0) {
             state = "alive";
