@@ -8,6 +8,7 @@ import java.util.concurrent.TimeUnit;
 
 import static ru.spbu.apmath.prog.battleship.Gui.doAIShot;
 import static ru.spbu.apmath.prog.battleship.Gui.doShot;
+import static ru.spbu.apmath.prog.battleship.Shots.hitTheShip;
 
 public class GameModel {
     private boolean gameOver;
@@ -24,9 +25,9 @@ public class GameModel {
                 public void actionPerformed(ActionEvent event) {
                     if (!gameOver) {
                         doShot(buttonsOfAI, shipsOfAI, humanShots,finalI);
-                        if (humanShots.isShot()) {
+                        if (humanShots.isShot()&& !hitTheShip(shipsOfAI,humanShots.getLastShot())) {
                             doAIShot(buttonsOfHuman, shipsOfHuman, AIShots);
-                            while (!AIShots.isShot()) {
+                            while (!AIShots.isShot() || hitTheShip(shipsOfHuman,AIShots.getLastShot())) {
                                 doAIShot(buttonsOfHuman, shipsOfHuman, AIShots);
                             }
                             if (!shipsOfHuman.checkSurvivors()) {

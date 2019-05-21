@@ -7,24 +7,21 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
-import java.util.concurrent.TimeUnit;
 
 import static ru.spbu.apmath.prog.battleship.Ships.*;
 import static ru.spbu.apmath.prog.battleship.Shots.checkShot;
-import static ru.spbu.apmath.prog.battleship.Shots.isShot;
 
 
 public class Gui {
 
-    static final int FIELD_SIZE = 10;
-    static final int PANEL_SIZE = 600;
-    final int CELL_SIZE = PANEL_SIZE / FIELD_SIZE;
-    static ImageIcon shipIcon = new ImageIcon("resources/ship.png");
-    static ImageIcon bangIcon = new ImageIcon("resources/bang.png");
-    static ImageIcon crossIcon = new ImageIcon("resources/cross.png");
-    static Ships randomShips;
-    static Cells fieldOfAI = new Cells();
-    static Cells fieldOfHuman = new Cells();
+    private static final int FIELD_SIZE = 10;
+    private static final int PANEL_SIZE = 600;
+    private static ImageIcon shipIcon = new ImageIcon("resources/ship.png");
+    private static ImageIcon bangIcon = new ImageIcon("resources/bang.png");
+    private static ImageIcon crossIcon = new ImageIcon("resources/cross.png");
+    private static Ships randomShips;
+    private static Cells fieldOfAI = new Cells();
+    private static Cells fieldOfHuman = new Cells();
 
     public static void main(String[] args) {
 
@@ -33,95 +30,81 @@ public class Gui {
         frame.setSize(1500, 1500);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLocationRelativeTo(null);
-        frame.setLayout(new GridBagLayout());
-
-        // создаем поле противника
-        ArrayList<JButton> buttonsOfAI = new ArrayList<>();
-
-        JPanel panelOfAI = createField(frame, 0, buttonsOfAI, fieldOfAI);
-
-        // создаем свое игровое поле
-        ArrayList<JButton> buttonsOfHuman = new ArrayList<>();
-
-        JPanel panelOfHuman = createField(frame, 1, buttonsOfHuman, fieldOfHuman);
-
-        // панель для создания кораблей
-        JPanel panel3 = new JPanel();
-        panel3.setLayout(new GridLayout(4, 3));
-        addOnFrame(frame, panel3, 2, 2);
-
+        frame.setLayout(new BoxLayout(frame.getContentPane(), BoxLayout.Y_AXIS));
 
         //подписи над полем
-        JLabel label1 = new JLabel("Мой флот");
-        addOnFrame(frame, label1, 1, 0);
+        JPanel panelOfLabel = new JPanel();
+        frame.add(panelOfLabel);
+        panelOfLabel.setLayout(new GridLayout(1, 2));
         JLabel label2 = new JLabel("Флот противника");
-        addOnFrame(frame, label2, 0, 0);
+        panelOfLabel.add(label2);
+        JLabel label1 = new JLabel("Мой флот");
+        panelOfLabel.add(label1);
+        label1.setFont(new Font(null, Font.BOLD, 20));
+        label2.setFont(new Font(null, Font.BOLD, 20));
         label1.setHorizontalAlignment(JLabel.CENTER);
         label2.setHorizontalAlignment(JLabel.CENTER);
 
+        //создание игровых полей
+        JPanel panelOfField = new JPanel();
+        frame.add(panelOfField);
+        ArrayList<JButton> buttonsOfAI = new ArrayList<>();
+        createField(panelOfField, buttonsOfAI, fieldOfAI);
+        ArrayList<JButton> buttonsOfHuman = new ArrayList<>();
+        createField(panelOfField, buttonsOfHuman, fieldOfHuman);
+
+        // панель для создания кораблей
+        JPanel panelOfSetShips = new JPanel();
+        panelOfSetShips.setLayout(new GridLayout(4, 3));
+        frame.add(panelOfSetShips);
+
 
         //создаю кнопки меню
+        JPanel panelOfButton = new JPanel();
+        panelOfButton.setLayout(new GridLayout(2, 2));
+        frame.add(panelOfButton);
         JButton init = new JButton("Начать игру");
-        addOnFrame(frame, init, 1, 3);
-        JButton exit = new JButton("Выход");
-        addOnFrame(frame, exit, 1, 4);
+        panelOfButton.add(init);
         JButton setRandom = new JButton("Расставить автоматически");
-        addOnFrame(frame, setRandom, 0, 4);
+        panelOfButton.add(setRandom);
+        JButton exit = new JButton("Выход");
+        panelOfButton.add(exit);
         JButton set = new JButton("Расставить корабли");
-        addOnFrame(frame, set, 0, 3);
+        panelOfButton.add(set);
 
         //ставлю слушатель, чтобы на кнопку выход можно было выйти
-        exit.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.exit(0);
-            }
-        });
+        exit.addActionListener(e -> System.exit(0));
 
 
         //расставляю рандомно созданные корабли
-        setRandom.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                for (JButton b : buttonsOfHuman) {
-                    b.setIcon(null);
-                }
-                randomShips = new Ships(FIELD_SIZE - 1);
-                for (Ship ship : randomShips.getShips()) {
-                    for (Cell deck : ship.getDecks()) {
-                        int x = deck.getLetter();
-                        int y = deck.getNumber();
-                        int numberOfButton = 10 * y + x;
-                        buttonsOfHuman.get(numberOfButton).setIcon(shipIcon);
-                    }
+        setRandom.addActionListener(e -> {
+            for (JButton b : buttonsOfHuman) {
+                b.setIcon(null);
+            }
+            randomShips = new Ships(FIELD_SIZE - 1);
+            for (Ship ship : randomShips.getShips()) {
+                for (Cell deck : ship.getDecks()) {
+                    int x = deck.getLetter();
+                    int y = deck.getNumber();
+                    int numberOfButton = 10 * y + x;
+                    buttonsOfHuman.get(numberOfButton).setIcon(shipIcon);
                 }
             }
         });
 
 
         //ставлю слушатель, чтобы началась игра
-        init.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Shots humanShots = new Shots();
-                Shots AIShots = new Shots();
-                for (JButton b : buttonsOfAI) {
-                    b.setIcon(null);
-                }
-                Ships ShipsOfAI = new Ships(FIELD_SIZE - 1);
-                for (Ship ship : ShipsOfAI.getShips()) {
-                    for (Cell deck : ship.getDecks()) {
-                        int x = deck.getLetter();
-                        int y = deck.getNumber();
-                        //int numberOfButton = 10 * y + x;
-                        //buttonsOfAI.get(numberOfButton).setIcon(shipIcon);
-                    }
-                }
-                //panel3.setVisible(false);
-                GameModel gameModel = new GameModel(false);
-                gameModel.game(randomShips, ShipsOfAI, buttonsOfAI, buttonsOfHuman, humanShots, AIShots);
-
+        init.addActionListener(e -> {
+            DialogWindow.infoBox("Игра началась!", "Information");
+            Shots humanShots = new Shots();
+            Shots AIShots = new Shots();
+            for (JButton b : buttonsOfAI) {
+                b.setIcon(null);
             }
+            Ships ShipsOfAI = new Ships(FIELD_SIZE - 1);
+            panelOfSetShips.setVisible(false);
+            GameModel gameModel = new GameModel(false);
+            gameModel.game(randomShips, ShipsOfAI, buttonsOfAI, buttonsOfHuman, humanShots, AIShots);
 
         });
 
@@ -159,35 +142,32 @@ public class Gui {
                     panel4.add(save);
                     panel4.add(reset);
 
-                    reset.addActionListener(new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            for (JButton b : buttonsOfHuman) {
-                                b.setIcon(null);
-                                one.setText("1");
-                                two.setText("2");
-                                three.setText("3");
-                                four.setText("4");
-                                doVisible(bthreeDecks, btwoDecks, boneDecks, edit2, edit3, edit4, two, three, four, true);
-                                bfourDecks.setVisible(true);
-                                one.setVisible(true);
-                                edit1.setVisible(true);
-                            }
+                    reset.addActionListener(e15 -> {
+                        for (JButton b : buttonsOfHuman) {
+                            b.setIcon(null);
+                            one.setText("1");
+                            two.setText("2");
+                            three.setText("3");
+                            four.setText("4");
+                            doVisible(bthreeDecks, btwoDecks, boneDecks, edit2, edit3, edit4, two, three, four, true);
+                            bfourDecks.setVisible(true);
+                            one.setVisible(true);
+                            edit1.setVisible(true);
                         }
                     });
 
-                    panel3.add(bfourDecks);
-                    panel3.add(one);
-                    panel3.add(edit1);
-                    panel3.add(bthreeDecks);
-                    panel3.add(two);
-                    panel3.add(edit2);
-                    panel3.add(btwoDecks);
-                    panel3.add(three);
-                    panel3.add(edit3);
-                    panel3.add(boneDecks);
-                    panel3.add(four);
-                    panel3.add(edit4);
+                    panelOfSetShips.add(bfourDecks);
+                    panelOfSetShips.add(one);
+                    panelOfSetShips.add(edit1);
+                    panelOfSetShips.add(bthreeDecks);
+                    panelOfSetShips.add(two);
+                    panelOfSetShips.add(edit2);
+                    panelOfSetShips.add(btwoDecks);
+                    panelOfSetShips.add(three);
+                    panelOfSetShips.add(edit3);
+                    panelOfSetShips.add(boneDecks);
+                    panelOfSetShips.add(four);
+                    panelOfSetShips.add(edit4);
 
                     bfourDecks.addActionListener(new ActionListener() {
                         int amountOfClick = 0;
@@ -267,33 +247,13 @@ public class Gui {
                         }
                     });
 
-                    edit1.addActionListener(new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            click2(buttonsOfHuman);
-                        }
-                    });
+                    edit1.addActionListener(e1 -> click2(buttonsOfHuman));
 
-                    edit2.addActionListener(new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            click2(buttonsOfHuman);
-                        }
-                    });
+                    edit2.addActionListener(e12 -> click2(buttonsOfHuman));
 
-                    edit3.addActionListener(new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            click2(buttonsOfHuman);
-                        }
-                    });
+                    edit3.addActionListener(e13 -> click2(buttonsOfHuman));
 
-                    edit4.addActionListener(new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            click2(buttonsOfHuman);
-                        }
-                    });
+                    edit4.addActionListener(e14 -> click2(buttonsOfHuman));
 
                     frame.pack();
                     setRandom.setEnabled(true);
@@ -307,45 +267,32 @@ public class Gui {
 
     }
 
-    public static JPanel createField(JFrame frame, int gridx, ArrayList<JButton> buttonsOfPanel, Cells fieldOfGamer) {
+    private static void createField(JPanel panel1, ArrayList<JButton> buttonsOfPanel, Cells fieldOfGamer) {
 
         JPanel panel = new JPanel();
         panel.setLayout((new GridLayout(10, 10)));
         panel.setPreferredSize(new Dimension(PANEL_SIZE, PANEL_SIZE));
         panel.setBorder(BorderFactory.createLineBorder(Color.BLUE));
-        frame.add(panel, new GridBagConstraints(gridx, 2, 1, 1, 1, 1,
-                GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL, new Insets(1, 1, 1, 1), 0, 0));
+        panel1.add(panel);
         panel.setBackground(Color.WHITE);
         for (int i = 0; i < 100; i++) {
             buttonsOfPanel.add(new JButton());
             fieldOfGamer.addCell(i % 10, i / 10);
 
         }
-        for (JButton button : buttonsOfPanel) {
-            panel.add(button);
-        }
-        return panel;
+        for (JButton button : buttonsOfPanel) panel.add(button);
     }
 
-    public static void addOnFrame(JFrame frame, Component component, int gridx, int gridy) {
-        frame.add(component, new GridBagConstraints(gridx, gridy, 1, 1, 1, 1,
-                GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL, new Insets(1, 1, 1, 1), 0, 0));
 
-    }
-
-    public static void click(ArrayList<JButton> bs, int amountOfClick, int numberOfDecks) {
+    private static void click(ArrayList<JButton> bs, int amountOfClick, int numberOfDecks) {
         for (int i = 0; i < bs.size(); i++) {
             int finalI = i;
-            bs.get(i).addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    int x = finalI % 10;
-                    int y = finalI / 10;
-                    if (check(x, y, numberOfDecks, amountOfClick) && checkSetInRow(amountOfClick, finalI, numberOfDecks)) {
-                        bs.get(finalI).setIcon(shipIcon);
-                        formShip(x, y, numberOfDecks, amountOfClick);
-                    }
-
+            bs.get(i).addActionListener(e -> {
+                int x = finalI % 10;
+                int y = finalI / 10;
+                if (check(x, y, numberOfDecks, amountOfClick) && checkSetInRow(amountOfClick, finalI, numberOfDecks)) {
+                    bs.get(finalI).setIcon(shipIcon);
+                    formShip(x, y, numberOfDecks, amountOfClick);
                 }
 
             });
@@ -354,16 +301,17 @@ public class Gui {
 
     }
 
-    public static void doAIShot(ArrayList<JButton> bs, Ships shipsOfHuman, Shots shots) {
+    static void doAIShot(ArrayList<JButton> bs, Ships shipsOfHuman, Shots shots) {
         Cell shot = shots.randomShots();
         int i = 10 * shot.getNumber() + shot.getLetter();
         if (!shots.hitSamePlace(shot.getLetter(), shot.getNumber())) {
+            shots.setLastShot(shot);
             String returnCheck = checkShot(shot, shipsOfHuman, shots, fieldOfHuman);
-            if (returnCheck == "bangIcon") {
+            if (returnCheck.equals("bangIcon")) {
                 bs.get(i).setIcon(bangIcon);
                 fieldOfHuman.setStateCell(shot.getLetter(), shot.getNumber());
                 shots.setShot(true);
-            } else if (returnCheck == "bangIconAround") {
+            } else if (returnCheck.equals("bangIconAround")) {
                 for (Integer b : shots.getIndexOfButtonOfCurrentShip(fieldOfHuman, shots)) {
                     bs.get(i).setIcon(bangIcon);
                     shots.setShot(true);
@@ -380,16 +328,17 @@ public class Gui {
     }
 
 
-    public static void doShot(ArrayList<JButton> bs, Ships ShipsOfAI, Shots shots, int finalI) {
+    static void doShot(ArrayList<JButton> bs, Ships ShipsOfAI, Shots shots, int finalI) {
         int x = finalI % 10;
         int y = finalI / 10;
         Cell shot = new Cell(x, y);
         if (!shots.hitSamePlace(x, y)) {
+            shots.setLastShot(shot);
             String returnCheck = checkShot(shot, ShipsOfAI, shots, fieldOfAI);
-            if (returnCheck == "bangIcon") {
+            if (returnCheck.equals("bangIcon")) {
                 bs.get(finalI).setIcon(bangIcon);
                 shots.setShot(true);
-            } else if (returnCheck == "bangIconAround") {
+            } else if (returnCheck.equals("bangIconAround")) {
                 for (Integer b : shots.getIndexOfButtonOfCurrentShip(fieldOfAI, shots)) {
                     bs.get(finalI).setIcon(bangIcon);
                     shots.setShot(true);
@@ -408,7 +357,7 @@ public class Gui {
     }
 
 
-    public static void click2(ArrayList<JButton> bs) {
+    private static void click2(ArrayList<JButton> bs) {
         for (int i = 0; i < bs.size(); i++) {
             int finalI = i;
             bs.get(i).addMouseListener(new MouseListener() {
@@ -447,7 +396,7 @@ public class Gui {
 
     }
 
-    public static void doVisible(JButton b1, JButton b2, JButton b3, JButton b4, JButton b5, JButton b6, JLabel l1, JLabel l2, JLabel l3, Boolean bol) {
+    private static void doVisible(JButton b1, JButton b2, JButton b3, JButton b4, JButton b5, JButton b6, JLabel l1, JLabel l2, JLabel l3, Boolean bol) {
         b1.setVisible(bol);
         b2.setVisible(bol);
         b3.setVisible(bol);
@@ -458,5 +407,8 @@ public class Gui {
         l2.setVisible(bol);
         l3.setVisible(bol);
     }
+
+
 }
+
 
