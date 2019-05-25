@@ -24,7 +24,7 @@ public class StartPanel extends JPanel {
         background.add(battleShipLabel, gbc);
 
         gbc.anchor = GridBagConstraints.CENTER;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
+        //gbc.fill = GridBagConstraints.HORIZONTAL;
 
         JPanel buttons = new JPanel(new GridBagLayout());
         buttons.setOpaque(false);

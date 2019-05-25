@@ -13,15 +13,17 @@ public class PlacementPanel extends JPanel {
 
     public PlacementPanel(Cells fieldOfHuman, JFrame frame, JPanel nextPanel) {
         setLayout(new GridBagLayout());
-
         //ставлю картинку на фон
         JLabel background = new JLabel(new ImageIcon("resources/PlacementPanelBackgroundIcon.jpg"));
         background.setLayout(new GridBagLayout());
         add(background);
 
+
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridwidth = GridBagConstraints.REMAINDER;
         gbc.anchor = GridBagConstraints.NORTH;
+
+
 
         //надпись над полем
         JLabel placementLabel = new JLabel("Расставьте свои корабли");
@@ -29,17 +31,24 @@ public class PlacementPanel extends JPanel {
         placementLabel.setFont(new Font("Helvetica Cyrillic Oblique", Font.ITALIC, 58));
         background.add(placementLabel, gbc);
 
-        //ставлю промежуток между надписью и полем
-        background.add(Box.createRigidArea(new Dimension(0, 80)), gbc);
 
-        gbc.anchor = GridBagConstraints.CENTER;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
+        //ставлю промежуток между надписью и полем
+        //background.add(Box.createRigidArea(new Dimension(0, 50)), gbc);
+
+
+
+        GridBagConstraints gbc2 = new GridBagConstraints();
+        //gbc2.anchor = GridBagConstraints.CENTER;
+        gbc2.gridx = 0;
+        gbc2.gridwidth = 2;
+        gbc2.gridy = 1;
 
         //формирую поле из кнопок
         ArrayList<JButton> buttonsOfHuman = new ArrayList<>();
         JPanel panelOfField = new JPanel();
         panelOfField.setLayout((new GridLayout(10, 10)));
         panelOfField.setPreferredSize(new Dimension(500, 500));
+        panelOfField.setMinimumSize(new Dimension(500, 500));
         panelOfField.setBorder(BorderFactory.createLineBorder(Color.BLUE, 3));
         panelOfField.setBackground(Color.WHITE);
         for (int i = 0; i < 100; i++) {
@@ -50,20 +59,22 @@ public class PlacementPanel extends JPanel {
         for (JButton button : buttonsOfHuman) {
             panelOfField.add(button);
         }
-        background.add(panelOfField,gbc);
+        background.add(panelOfField,gbc2);
 
-        //JPanel middlePanel = new JPanel();
-        //middlePanel.setLayout(new GridLayout(1, 2));
-        //middlePanel.setOpaque(false);
-        //middlePanel.add(panelOfField);
-        //middlePanel.add(mainPanelOfSet);
-        //background.add(middlePanel, gbc);
-        //mainPanelOfSet.setVisible(false);
 
-        gbc.anchor = GridBagConstraints.SOUTH;
+        //gbc.anchor = GridBagConstraints.SOUTH;
 
         //делаю промежуток между полем и кнопками
-        background.add(Box.createRigidArea(new Dimension(0, 80)), gbc);
+        //background.add(Box.createRigidArea(new Dimension(0, 50)), gbc);
+
+        // панель для создания кораблей
+
+        ConstructionPanel mainPanelOfSet = new ConstructionPanel();
+        GridBagConstraints gbc3 = new GridBagConstraints();
+        gbc3.gridx = 2 ;
+        gbc3.gridy = 1;
+        background.add(mainPanelOfSet,gbc3);
+        //mainPanelOfSet.setVisible(false);
 
 
         //создаю кнопки меню
@@ -84,72 +95,18 @@ public class PlacementPanel extends JPanel {
         JButton setBtn = new JButton("Расставить корабли");
         panelOfButton.add(setBtn);
 
-        background.add(panelOfButton, gbc);
+        GridBagConstraints gbc4 = new GridBagConstraints();
+        gbc4.anchor = GridBagConstraints.PAGE_END;
+        gbc4.gridwidth = 2;
+        gbc4.gridx = 1;
+        gbc4.gridy = 2;
+        background.add(panelOfButton, gbc4);
 
-        // панель для создания кораблей
 
-        JPanel panelOfSetShips = new JPanel();
-        panelOfSetShips.setLayout(new GridLayout(8, 3));
-        panelOfSetShips.setOpaque(false);
-        JButton fourDecksBtn = new JButton("Четырехпалубники");
-        JButton threeDecksBtn = new JButton("Трехпалубники");
-        JButton twoDecksBtn = new JButton("Двухпалубники");
-        JButton oneDecksBtn = new JButton("Однопалубники");
-        JLabel one = new JLabel("1");
-        JLabel two = new JLabel("2");
-        JLabel three = new JLabel("3");
-        JLabel four = new JLabel("4");
-        one.setForeground(Color.WHITE);
-        two.setForeground(Color.WHITE);
-        three.setForeground(Color.WHITE);
-        four.setForeground(Color.WHITE);
-        one.setHorizontalAlignment(JLabel.CENTER);
-        two.setHorizontalAlignment(JLabel.CENTER);
-        three.setHorizontalAlignment(JLabel.CENTER);
-        four.setHorizontalAlignment(JLabel.CENTER);
-        JButton edit1 = new JButton("редактировать");
-        JButton edit2 = new JButton("редактировать");
-        JButton edit3 = new JButton("редактировать");
-        JButton edit4 = new JButton("редактировать");
-        panelOfSetShips.add(fourDecksBtn);
-        panelOfSetShips.add(one);
-        panelOfSetShips.add(edit1);
-        panelOfSetShips.add(Box.createRigidArea(new Dimension(0, 3)));
-        panelOfSetShips.add(Box.createRigidArea(new Dimension(0, 3)));
-        panelOfSetShips.add(Box.createRigidArea(new Dimension(0, 3)));
-        panelOfSetShips.add(threeDecksBtn);
-        panelOfSetShips.add(two);
-        panelOfSetShips.add(edit2);
-        panelOfSetShips.add(Box.createRigidArea(new Dimension(0, 3)));
-        panelOfSetShips.add(Box.createRigidArea(new Dimension(0, 3)));
-        panelOfSetShips.add(Box.createRigidArea(new Dimension(0, 3)));
-        panelOfSetShips.add(twoDecksBtn);
-        panelOfSetShips.add(three);
-        panelOfSetShips.add(edit3);
-        panelOfSetShips.add(Box.createRigidArea(new Dimension(0, 3)));
-        panelOfSetShips.add(Box.createRigidArea(new Dimension(0, 3)));
-        panelOfSetShips.add(Box.createRigidArea(new Dimension(0, 3)));
-        panelOfSetShips.add(oneDecksBtn);
-        panelOfSetShips.add(four);
-        panelOfSetShips.add(edit4);
 
-        JPanel miniPanelOfButton = new JPanel();
-        miniPanelOfButton.setOpaque(false);
-        JButton save = new JButton("Сохранить");
-        JButton reset = new JButton("Сбросить");
-        miniPanelOfButton.add(save);
-        miniPanelOfButton.add(reset);
 
-        JPanel mainPanelOfSet = new JPanel();
-        mainPanelOfSet.setLayout(new GridLayout(2,1));
-        mainPanelOfSet.setOpaque(false);
-        mainPanelOfSet.add(panelOfSetShips);
-        mainPanelOfSet.add(Box.createRigidArea(new Dimension(0,10)));
-        mainPanelOfSet.add(miniPanelOfButton);
 
-        gbc.gridwidth = 2;
-        background.add(mainPanelOfSet,gbc);
-        //mainPanelOfSet.setVisible(false);
+
         //ставлю слушатели на кнопки
 
         exitBtn.addActionListener(e -> System.exit(0)); //осуществляю выход на кнопку выход
@@ -170,13 +127,13 @@ public class PlacementPanel extends JPanel {
         });
 
         initBtn.addActionListener(e -> {            //ставлю слушатель, чтобы началась игра(переход на следующую панель)
-            DialogWindow.infoBox("Игра началась!", "Information");
+            DialogWindow.infoBox("Игра начинаeтся...", "Information");
             setVisible(false);
             frame.add(nextPanel);
 
         });
 
-        setBtn.addActionListener(new ActionListener() {
+       /* setBtn.addActionListener(new ActionListener() {
             int amount = 0;
 
             @Override
@@ -186,7 +143,7 @@ public class PlacementPanel extends JPanel {
                     amount += 1;
 
 
-  /*                  reset.addActionListener(e15 -> {
+                    reset.addActionListener(e15 -> {
                         for (JButton b : buttonsOfHuman) {
                             b.setIcon(null);
                             one.setText("1");
@@ -199,7 +156,7 @@ public class PlacementPanel extends JPanel {
                             edit1.setVisible(true);
                         }
                     });
-*/
+
 
                     fourDecksBtn.addActionListener(new ActionListener() {
                         int amountOfClick = 0;
@@ -291,7 +248,7 @@ public class PlacementPanel extends JPanel {
                     //setRandom.setEnabled(true);
                 }
             }
-        });
+        });*/
     }
 
 

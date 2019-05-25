@@ -1,0 +1,40 @@
+package ru.spbu.apmath.prog.battleship;
+
+public class fd {
+   /* layout.setHorizontalGroup(layout.createSequentialGroup()
+            .addGroup(layout.createParallelGroup()
+                    .addComponent(fourDecksBtn)
+                    .addComponent(threeDecksBtn)
+                    .addComponent(twoDecksBtn)
+                    .addComponent(oneDecksBtn))
+            .addGroup(layout.createParallelGroup()
+                    .addComponent(one)
+                    .addComponent(two)
+                    .addComponent(three)
+                    .addComponent(four))
+            .addGroup(layout.createParallelGroup()
+                    .addComponent(edit1)
+                    .addComponent(edit2)
+                    .addComponent(edit3)
+                    .addComponent(edit4))
+            );
+        layout.setVerticalGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup()
+                        .addComponent(fourDecksBtn)
+                        .addComponent(one)
+                        .addComponent(edit1))
+            .addGroup(layout.createParallelGroup()
+                        .addComponent(threeDecksBtn)
+                        .addComponent(two)
+                        .addComponent(edit2))
+            .addGroup(layout.createParallelGroup()
+                        .addComponent(twoDecksBtn)
+                        .addComponent(three)
+                        .addComponent(edit3))
+            .addGroup(layout.createParallelGroup()
+                        .addComponent(oneDecksBtn)
+                        .addComponent(four)
+                        .addComponent(edit4))
+            );
+*/
+}

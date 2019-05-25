@@ -49,6 +49,11 @@ public class Gui {
         frame.add(startPanel);
 
 
+        JLabel battleShipLabel = new JLabel("Battle Ship");
+        battleShipLabel.setForeground(Color.WHITE);
+        battleShipLabel.setFont(new Font("Courier New", Font.ITALIC, 100));
+
+
         //подписи над полем
 
         JLabel label2 = new JLabel("Флот противника");
@@ -72,9 +77,19 @@ public class Gui {
         ArrayList<JButton> buttonsOfHuman = new ArrayList<>();
         createField(panelOfHuman, buttonsOfHuman, fieldOfHuman,500);
 
-        background.setLayout(new GridLayout(1,2));
-        background.add(panelOfAI);
-        background.add(panelOfHuman);
+        background.setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridwidth = GridBagConstraints.REMAINDER;
+        gbc.anchor = GridBagConstraints.NORTH;
+
+        JPanel panelOfField = new JPanel();
+        panelOfField.setLayout(new GridLayout(1,2));
+        panelOfField.add(panelOfAI);
+        panelOfField.add(panelOfHuman);
+        panelOfField.setOpaque(false);
+        background.add(battleShipLabel,gbc);
+        gbc.anchor = GridBagConstraints.CENTER;
+        background.add(panelOfField,gbc);
 
 
 
