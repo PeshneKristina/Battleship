@@ -8,18 +8,17 @@ public class Ships {
 
     private final int CELL_SIZE = 40;
     private  ArrayList<Ship> ships = new ArrayList<>();
-    private static ArrayList<Ship> ships1 = new ArrayList<>();
-    private static ArrayList<Cell> fourDecks = new ArrayList<>();
-    private static ArrayList<Cell> threeDecks1 = new ArrayList<>();
-    private static ArrayList<Cell> threeDecks2 = new ArrayList<>();
-    private static ArrayList<Cell> twoDecks1 = new ArrayList<>();
-    private static ArrayList<Cell> twoDecks2 = new ArrayList<>();
-    private static ArrayList<Cell> twoDecks3 = new ArrayList<>();
-    private static ArrayList<Cell> oneDecks1 = new ArrayList<>();
-    private static ArrayList<Cell> oneDecks2 = new ArrayList<>();
-    private static ArrayList<Cell> oneDecks3 = new ArrayList<>();
-    private static ArrayList<Cell> oneDecks4 = new ArrayList<>();
-    static ArrayList<Cell> arrayOfDecks = new ArrayList<>();
+    private ArrayList<Cell> fourDecks;
+    private  ArrayList<Cell> threeDecks1;
+    private  ArrayList<Cell> threeDecks2;
+    private  ArrayList<Cell> twoDecks1;
+    private  ArrayList<Cell> twoDecks2;
+    private  ArrayList<Cell> twoDecks3;
+    private  ArrayList<Cell> oneDecks1;
+    private  ArrayList<Cell> oneDecks2;
+    private  ArrayList<Cell> oneDecks3;
+    private  ArrayList<Cell> oneDecks4;
+    ArrayList<Cell> arrayOfDecks = new ArrayList<>();
     private final int[] PATTERN = {4, 3, 3, 2, 2, 2, 1, 1, 1, 1};
     private Random random;
 
@@ -38,18 +37,36 @@ public class Ships {
 
     }
 
-    public static ArrayList<Cell> formShip(int x, int y, int numberOfDecks, int amountOfClick) {
+    public Ships(){
+        this.fourDecks = new ArrayList<>();
+        this.threeDecks1 = new ArrayList<>();
+        this.threeDecks2 = new ArrayList<>();
+        this.twoDecks1 = new ArrayList<>();
+        this.twoDecks2 = new ArrayList<>();
+        this.twoDecks3 = new ArrayList<>();
+        this.oneDecks1 = new ArrayList<>();
+        this.oneDecks2 = new ArrayList<>();
+        this.oneDecks3 = new ArrayList<>();
+        this.oneDecks4 = new ArrayList<>();
+        this.arrayOfDecks = new ArrayList<>();
+            }
+
+    public ArrayList<Cell> getArrayOfDecks() {
+        return arrayOfDecks;
+    }
+
+    public ArrayList<Cell> formShip(int x, int y, int numberOfDecks, int amountOfClick) {
         Cell deck = new Cell(x, y);
         arrayOfDecks = formArrayOfDecks(amountOfClick, numberOfDecks);
         arrayOfDecks.add(deck);
         if (arrayOfDecks.size() == numberOfDecks) {
             Ship ship = new Ship(arrayOfDecks);
-            ships1.add(ship);
+            ships.add(ship);
         }
         return arrayOfDecks;
     }
 
-    public static boolean check(int x, int y, int numberOfDecks, int amountOfClick) {
+    public boolean check(int x, int y, int numberOfDecks, int amountOfClick) {
         Cell deck = new Cell(x, y);
         arrayOfDecks = formArrayOfDecks(amountOfClick, numberOfDecks);
         if (isOverlayOrTouch1(deck) || !(arrayOfDecks.size() < numberOfDecks)) {
@@ -58,15 +75,15 @@ public class Ships {
         return true;
     }
 
-    public static boolean isOverlayOrTouch1(Cell cell) {
-        if (ships1.isEmpty()) return false;
-        for (Ship ship : ships1) {
+    public boolean isOverlayOrTouch1(Cell cell) {
+        if (ships.isEmpty()) return false;
+        for (Ship ship : ships) {
             if (ship.isOverlayOrTouchCell1(cell, ship)) return true;
         }
         return false;
     }
 
-    public static ArrayList<Cell> formArrayOfDecks(int amountOfClick, int numberOfDecks) {
+    public ArrayList<Cell> formArrayOfDecks(int amountOfClick, int numberOfDecks) {
         if ((numberOfDecks == 4) && (amountOfClick == 1)) return fourDecks;
         if ((numberOfDecks == 3) && (amountOfClick == 1)) return threeDecks1;
         if ((numberOfDecks == 3) && (amountOfClick == 2)) return threeDecks2;
@@ -98,7 +115,7 @@ public class Ships {
     }
 
 
-    public static boolean checkSetInRow(int amountOfClick, int finalI, int numberOfDecks) {
+    public boolean checkSetInRow(int amountOfClick, int finalI, int numberOfDecks) {
         ArrayList<Cell> decks = formArrayOfDecks(amountOfClick, numberOfDecks);
         if (decks.isEmpty()) {
             return true;
@@ -198,7 +215,7 @@ public class Ships {
         return false;
     }
 
-    public static boolean thisTypeIsPlaced(int number){
+    public boolean thisTypeIsPlaced(int number){
        int amount = 0;
        if (fourDecks.size()==4) amount = 1;
        if (threeDecks1.size()==3 && threeDecks2.size() == 3 ) amount = 2;

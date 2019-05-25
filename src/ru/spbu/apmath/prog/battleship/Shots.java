@@ -8,22 +8,35 @@ public class Shots {
     private ArrayList<Cell> shots;
     private Random random;
     private boolean isShot;
-    private ArrayList<Cell> currentShip;
+    private ArrayList<Cell> deadShip;
+    private ArrayList<Cell> injuredShip;
     private Cell lastShot;
 
     Shots() {
         isShot = false;
-        shots = new ArrayList<Cell>();
-        currentShip = new ArrayList<Cell>();
-
+        shots = new ArrayList<>();
+        deadShip = new ArrayList<>();
+        injuredShip = new ArrayList<>();
     }
 
-    public ArrayList<Cell> getCurrentShip() {
-        return currentShip;
+    public ArrayList<Cell> getDeadShip() {
+        return deadShip;
     }
 
-    public void setCurrentShip(ArrayList<Cell> currentShip) {
-        this.currentShip = currentShip;
+    public ArrayList<Cell> getInjuredShip() {
+        return injuredShip;
+    }
+
+    public void addInInjuredShip(Cell cell) {
+        injuredShip.add(cell);
+    }
+
+    public void clearInjuredShip(){
+        injuredShip.clear();
+    }
+
+    public void setDeadShip(ArrayList<Cell> deadShip) {
+        this.deadShip = deadShip;
     }
 
     public boolean isShot() {
@@ -64,7 +77,7 @@ public class Shots {
     public ArrayList<Integer> getIndexOfButtonOfCurrentShip(Cells fieldOfGamer, Shots arrayOfShots) {
         int i = 0;
         ArrayList<Integer> indexOfButton = new ArrayList<>();
-        for (Cell deck : currentShip) {
+        for (Cell deck : deadShip) {
             for (int dx = -1; dx < 2; dx++)
                 for (int dy = -1; dy < 2; dy++) {
                     if (fieldOfGamer.getStateCell(deck.getLetter() + dx, deck.getNumber() + dy) != "busy" && fieldOfGamer.cellInField(deck.getLetter() + dx, deck.getNumber() + dy)) {
@@ -84,8 +97,8 @@ public class Shots {
             for (Ship ship : arrayOfShips.getShips()) {
                 if (ship.getDecks().indexOf(cell) != -1) {
                     ship.checkState(field);
-                    if (ship.getState() == "killed") {
-                        arrayOfShots.setCurrentShip(ship.getDecks());
+                    if (ship.getState().equals("killed")) {
+                        arrayOfShots.setDeadShip(ship.getDecks());
                         return "bangIconAround";
                     } else {
                         return "bangIcon";
@@ -96,7 +109,7 @@ public class Shots {
         return "crossIcon";
     }
 
-    public Cell getLastShot(){
+    public Cell getLastShot() {
         return lastShot;
     }
 
@@ -118,8 +131,11 @@ public class Shots {
         return null;
     }
 
-    public ArrayList<Cell> getShots(){
+    public ArrayList<Cell> getShots() {
         return shots;
     }
 
+    public void setInjuredShip(ArrayList<Cell> injuredShip) {
+        this.injuredShip = injuredShip;
+    }
 }

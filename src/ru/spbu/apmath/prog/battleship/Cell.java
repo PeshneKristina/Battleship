@@ -1,6 +1,5 @@
 package ru.spbu.apmath.prog.battleship;
 
-import java.util.ArrayList;
 
 public class Cell {
     private int number;
@@ -8,7 +7,7 @@ public class Cell {
     private String state;
 
 
-    public Cell(int letter,int number) {
+    Cell(int letter, int number) {
         this.letter = letter;
         this.number = number;
         this.state = "free";
@@ -23,11 +22,10 @@ public class Cell {
     }
 
 
-    public String checkState(int x,int y){
-        if (number == x && letter == y){
+    public String checkState(int x, int y) {
+        if (number == x && letter == y) {
             return "busy";
-        }
-        else  return "free";
+        } else return "free";
     }
 
     public String getState() {

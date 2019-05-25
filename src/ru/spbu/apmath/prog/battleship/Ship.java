@@ -62,7 +62,7 @@ public class Ship {
     }
 
 
-    // подумать как рисовать видимые и невидимые корабли
+
 
 
     public boolean isOverlayOrTouch(Ship currentShip) {
